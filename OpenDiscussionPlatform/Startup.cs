@@ -9,6 +9,8 @@ namespace OpenDiscussionPlatform
         public void Configuration(IAppBuilder app)
         {
             ConfigureAuth(app);
+
+            CreateAdminUserAndApplicationRoles();
         }
     }
 }
