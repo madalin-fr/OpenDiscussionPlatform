@@ -1,0 +1,21 @@
+﻿
+@{
+    ViewBag.Title = "Show";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<h1>@ViewBag.ForumPost.Title</h1>
+<p>@ViewBag.ForumPost.Content</p>
+<small>@ViewBag.ForumPost.Date.ToString()</small>
+<br />
+<a href="/postari/listare">Inapoi la postari</a>
+<br />
+
+<form method="post" action="/postari/Delete/@ViewBag.ForumPost.Id">
+    @Html.HttpMethodOverride(HttpVerbs.Delete)
+    <button type="submit">Sterge postare</button>
+</form>
+
+
+

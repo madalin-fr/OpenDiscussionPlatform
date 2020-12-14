@@ -1,0 +1,17 @@
+﻿@foreach (var forumPost in ViewBag.ForumPosts)
+{
+    <h1>@forumPost.Title</h1>
+    <p>@forumPost.Content</p>
+    <small>@forumPost.Date.ToString()</small>
+
+    <a href="/postari/Show/@forumPost.Id">Afisare postare</a> <!-- Ruta implicita -->
+    <a href="/postari/Edit/@forumPost.Id">Editare postare</a>
+
+    @* <a href="/postari/show/@forumPost.Id">Afisare postare</a>  --> <!-- Ruta configurata -->  *@
+
+    <br />
+    <hr />
+    <br />
+}
+
+<a href="/postari/New">Adaugare postare</a>
