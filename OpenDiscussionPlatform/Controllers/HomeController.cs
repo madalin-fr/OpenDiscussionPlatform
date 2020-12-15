@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenDiscussionPlatform.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,22 +9,26 @@ namespace OpenDiscussionPlatform.Controllers
 {
     public class HomeController : Controller
     {
+
+        private ApplicationDbContext db = new ApplicationDbContext();
+
+
         public ActionResult Index()
         {
-            return View();
-        }
+            if (Request.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "ForumPosts");
+            }
 
-        public ActionResult About()
-        {
-            ViewBag.Message = "Your application description page.";
-            return View();
-        }
+            var forumposts= from forumpost in db.ForumPosts
+                           select forumpost;
 
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
+            //ViewBag.FirstForumPost = forumposts.First();
+            //ViewBag.ForumPosts = forumposts.OrderBy(o => o.Date).Skip(1).Take(2);
 
             return View();
         }
+
+
     }
 }

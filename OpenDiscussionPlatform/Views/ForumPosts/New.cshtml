@@ -1,7 +1,32 @@
-﻿@{
-    ViewBag.Title = "New"; }
-<h2>Creare articol</h2>
-<p>Afisare formular de adaugare postare</p>
-<form method="post" action="/postari/New">
-    <button type="submit">Adauga postare</button>
-</form>
+﻿@model OpenDiscussionPlatform.Models.ForumPost
+
+<h2>Adaugare postare</h2>
+
+
+@using (Html.BeginForm(actionName: "New", controllerName: "ForumPosts"))
+{
+    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+    @Html.Label("Title", "Titlu postare")
+    <br />
+    @Html.TextBox("Title", null, new { @class = "form-control" })
+
+    @Html.ValidationMessageFor(m => m.Title, null, new { @class = "text-danger" })
+    <br /><br />
+
+    @Html.Label("Content", "Continut postare")
+    <br />
+    @Html.TextArea("Content", null, new { @class = "form-control summernote" })
+    @Html.ValidationMessage("Content", null, new { @class = "text-danger" })
+    <br /><br />
+
+    <label>Selectati categoria</label>
+    @Html.DropDownListFor(m => m.CategoryId, new SelectList(Model.Categ, "Value", "Text"),
+    "Selectati categoria", new { @class = "form-control" })
+    @Html.ValidationMessageFor(m => m.CategoryId, "", new { @class = "text-danger" })
+    <br />
+    <br />
+    <button class="btn btn-sm btn-success" type="submit">Adauga postare</button>
+
+}
+

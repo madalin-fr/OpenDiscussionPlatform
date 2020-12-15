@@ -1,4 +1,6 @@
-﻿using OpenDiscussionPlatform.Models;
+﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using OpenDiscussionPlatform.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,60 +9,137 @@ using System.Web.Mvc;
 
 namespace OpenDiscussionPlatform.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class UsersController : Controller
     {
-        // GET: Lista users
+
+        private ApplicationDbContext db = new ApplicationDbContext();
+
+
+        // GET: Users
         public ActionResult Index()
         {
+            var users = from user in db.Users
+                        orderby user.UserName
+                        select user;
+            ViewBag.UsersList = users;
             return View();
         }
 
-        // GET: Vizualizarea unui user
-        public ActionResult Show(int id)
+        public ActionResult Show(string id)
         {
-            return View();
+            ApplicationUser user = db.Users.Find(id);
+
+            ViewBag.utilizatorCurent = User.Identity.GetUserId();
+
+            //var userRole = roles.Where(j => j.Id == user.Roles.FirstOrDefault().RoleId).
+            //               Select(a => a.Name).FirstOrDefault();
+
+            string currentRole = user.Roles.FirstOrDefault().RoleId;
+
+            var userRoleName = (from role in db.Roles
+                                where role.Id == currentRole
+                                select role.Name).First();
+
+            ViewBag.roleName = userRoleName;
+
+            return View(user);
         }
 
-        // GET: Formularul de creare a unui user nou
-        public ActionResult New()
+        public ActionResult Edit(string id)
         {
-            return View();
+            ApplicationUser user = db.Users.Find(id);
+            user.AllRoles = GetAllRoles();
+            var userRole = user.Roles.FirstOrDefault();
+            ViewBag.userRole = userRole.RoleId;
+            return View(user);
         }
 
-        // POST: Se trimit datele user-ului catre server pentru creare
-        [HttpPost]
-        public ActionResult New(User user)
-        {
-            int id = 123;
-            return Redirect("/users/" + id);
-        }
-
-        //[NonAction]
-        //public User GetUser(int id)
-        //{
-        //    return;
-        //}
-
-
-
-        // PUT: Editare user
         [HttpPut]
-        public ActionResult Edit(User ID)
+        public ActionResult Edit(string id, ApplicationUser newData)
         {
-            // modify user code here
+            ApplicationUser user = db.Users.Find(id);
+            user.AllRoles = GetAllRoles();
+            var userRole = user.Roles.FirstOrDefault();
+            ViewBag.userRole = userRole.RoleId;
+
+            try
+            {
+                ApplicationDbContext context = new ApplicationDbContext();
+                var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(context));
+                var UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
 
 
-            return Redirect("/users/" + ID);
-            //return RedirectToRoute("users_show", new { id = ID });
+                if (TryUpdateModel(user))
+                {
+                    user.UserName = newData.UserName;
+                    user.Email = newData.Email;
+                    user.PhoneNumber = newData.PhoneNumber;
+
+                    var roles = from role in db.Roles select role;
+                    foreach (var role in roles)
+                    {
+                        UserManager.RemoveFromRole(id, role.Name);
+                    }
+
+                    var selectedRole = db.Roles.Find(HttpContext.Request.Params.Get("newRole"));
+                    UserManager.AddToRole(id, selectedRole.Name);
+
+                    db.SaveChanges();
+                }
+                return RedirectToAction("Index");
+            }
+            catch (Exception e)
+            {
+                Response.Write(e.Message);
+                newData.Id = id;
+                return View(newData);
+            }
         }
 
+        [NonAction]
+        public IEnumerable<SelectListItem> GetAllRoles()
+        {
+            var selectList = new List<SelectListItem>();
+
+            var roles = from role in db.Roles select role;
+            foreach (var role in roles)
+            {
+                selectList.Add(new SelectListItem
+                {
+                    Value = role.Id.ToString(),
+                    Text = role.Name.ToString()
+                });
+            }
+            return selectList;
+        }
 
         [HttpDelete]
-        public ActionResult Delete(int id)
+        public ActionResult Delete(string id)
         {
-            // cod stergere user din baza de date
-            // redirectionam browserul la pagina index a user-ilor
-            return RedirectToRoute("users_index");
+            ApplicationDbContext context = new ApplicationDbContext();
+
+            var UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
+
+            var user = UserManager.Users.FirstOrDefault(u => u.Id == id);
+
+            var forumPosts = db.ForumPosts.Where(a => a.UserId == id);
+            foreach (var forumpost in forumPosts)
+            {
+                db.ForumPosts.Remove(forumpost);
+
+            }
+
+            var replies = db.Replies.Where(comm => comm.UserId == id);
+            foreach (var reply in replies)
+            {
+                db.Replies.Remove(reply);
+            }
+
+
+            db.SaveChanges();
+            UserManager.Delete(user);
+            return RedirectToAction("Index");
         }
 
     }

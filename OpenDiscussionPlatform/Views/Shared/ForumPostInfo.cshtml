@@ -1,0 +1,28 @@
+﻿
+
+<div class="panel-heading forumpost-heading">
+    <span class="font-roboto article-title">@Model.Title</span>
+</div>
+
+<div class="panel-body">
+    <span class="article-content-title">Continut postare</span>
+    <br />
+    <div class="forumpost-content-wrapper">
+        @Html.Raw(Model.Content)
+    </div>
+</div>
+<div class="forumpost-meta">
+    <span class="">
+        <i class="glyphicon glyphicon-time"></i>
+        @Model.Date
+    </span>
+    <div>
+        <i class="glyphicon glyphicon-bookmark"></i>
+        @Model.Category.CategoryName
+    </div>
+    <div>
+        <i class="glyphicon glyphicon-user"></i>
+        <strong> @Model.User.UserName </strong>
+    </div>
+</div>
+

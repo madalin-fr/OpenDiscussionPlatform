@@ -1,0 +1,14 @@
+﻿@model OpenDiscussionPlatform.Models.Reply
+
+
+
+<h2>Editare raspuns</h2>
+<form method="post" action="/Comments/Edit/@Model.ReplyId">
+    @Html.HttpMethodOverride(HttpVerbs.Put)
+    <label>Continut raspuns</label>
+    <br />
+    <textarea name="Content">@Model.Content</textarea>
+    <br />
+    <button class="btn btn-success" type="submit">Editeaza raspuns</button>
+</form>
+

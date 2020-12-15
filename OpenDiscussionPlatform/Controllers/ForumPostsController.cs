@@ -1,6 +1,8 @@
-﻿using OpenDiscussionPlatform.Models;
+﻿using Microsoft.AspNet.Identity;
+using OpenDiscussionPlatform.Models;
 using System;
 using System.Collections.Generic;
+using Microsoft.Security.Application;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -10,77 +12,236 @@ namespace OpenDiscussionPlatform.Controllers
     public class ForumPostsController : Controller
     {
 
-        // GET: Lista tuturor postarilor
-        [ActionName("listare")]
-        [OutputCache(Duration = 30)]
+        private ApplicationDbContext db = new ApplicationDbContext();
+
+        private int _perPage = 3;
+
+        /// GET: ForumPost
+        [Authorize(Roles = "User,Editor,Admin")]
         public ActionResult Index()
         {
-            ForumPost[] forumPosts = GetForumPosts();
+            var forumposts = db.ForumPosts.Include("Category").Include("User").OrderBy(a => a.Date);
+            var totalItems = forumposts.Count();
+            var currentPage = Convert.ToInt32(Request.Params.Get("page"));
 
-            // Adaugam array-ul de postari in view
-            ViewBag.ForumPosts = forumPosts;
+            var offset = 0;
 
-            return View("Index");
+            if (!currentPage.Equals(0))
+            {
+                offset = (currentPage - 1) * this._perPage;
+            }
+
+            var paginatedForumPosts= forumposts.Skip(offset).Take(this._perPage);
+
+            if (TempData.ContainsKey("message"))
+            {
+                ViewBag.message = TempData["message"].ToString();
+            }
+
+            //ViewBag.perPage = this._perPage;
+            ViewBag.total = totalItems;
+            ViewBag.lastPage = Math.Ceiling((float)totalItems / (float)this._perPage);
+            ViewBag.ForumPosts = paginatedForumPosts;
+
+            return View();
         }
 
 
 
-        // GET: Vizualizarea unei postari
+        [Authorize(Roles = "User,Editor,Admin")]
         public ActionResult Show(int id)
         {
-            ForumPost[] forumPosts = GetForumPosts();
+            ForumPost forumPost = db.ForumPosts.Find(id);
 
+            SetAccessRights();
+
+            /*
+            ViewBag.afisareButoane = false;
+            if (User.IsInRole("Editor") || User.IsInRole("Admin"))
+            {
+                ViewBag.afisareButoane = true;
+            }
+
+            ViewBag.esteAdmin = User.IsInRole("Admin");
+            ViewBag.utilizatorCurent = User.Identity.GetUserId();
+
+            */
+
+            return View(forumPost);
+
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "User,Editor,Admin")]
+        public ActionResult Show(Reply repl)
+        {
+            repl.Date = DateTime.Now;
+            repl.UserId = User.Identity.GetUserId();
             try
             {
-                ViewBag.ForumPost = forumPosts[id];
-                return View();
+                if (ModelState.IsValid)
+                {
+                    db.Replies.Add(repl);
+                    db.SaveChanges();
+                    return Redirect("/ForumPosts/Show/" + repl.ForumPostId);
+                }
+
+                else
+                {
+                    ForumPost a = db.ForumPosts.Find(repl.ForumPostId);
+
+                    SetAccessRights();
+
+                    return View(a);
+                }
+
             }
 
             catch (Exception e)
             {
-                ViewBag.ErrorMessage = e.Message;
-                return View("Error");
+                ForumPost a = db.ForumPosts.Find(repl.ForumPostId);
+
+                SetAccessRights();
+
+                return View(a);
             }
 
         }
 
-        // GET: Afisarea formularului de creare pentru o postare
+        [Authorize(Roles = "Editor,Admin")]
         public ActionResult New()
         {
-            return View();
+            ForumPost forumPost = new ForumPost();
+
+            // preluam lista de categorii din metoda GetAllCategories()
+            forumPost.Categ = GetAllCategories();
+
+            // Preluam ID-ul utilizatorului curent
+            forumPost.UserId = User.Identity.GetUserId();
+
+            return View(forumPost);
         }
 
-        // POST: Trimiterea datelor despre postare catre server pentru creare
+
         [HttpPost]
+        [Authorize(Roles = "Editor,Admin")]
+        [ValidateInput(false)]
         public ActionResult New(ForumPost forumPost)
         {
-            // ... cod creare postare ...
-            return View("NewPostMethod");
+            forumPost.Date = DateTime.Now;
+            forumPost.UserId = User.Identity.GetUserId();
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    forumPost.Content = Sanitizer.GetSafeHtmlFragment(forumPost.Content);
+
+                    db.ForumPosts.Add(forumPost);
+                    db.SaveChanges();
+                    TempData["message"] = "Postarea a fost adaugata";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    forumPost.Categ = GetAllCategories();
+                    return View(forumPost);
+                }
+            }
+            catch (Exception e)
+            {
+                forumPost.Categ = GetAllCategories();
+                return View(forumPost);
+            }
         }
 
-        // GET: Afisarea datelor unei postari pentru editare
+
+        [Authorize(Roles = "Editor,Admin")]
         public ActionResult Edit(int id)
         {
-            ViewBag.Id = id;
-            return View();
+            ForumPost forumPost = db.ForumPosts.Find(id);
+            forumPost.Categ = GetAllCategories();
+
+            if (forumPost.UserId == User.Identity.GetUserId() || User.IsInRole("Admin"))
+            {
+                return View(forumPost);
+            }
+
+            else
+            {
+                TempData["message"] = "Nu aveti dreptul sa faceti modificari asupra unei postari care nu va apartine";
+                return RedirectToAction("Index");
+            }
         }
 
 
-        // PUT: Trimiterea modificarilor facute catre server si sa le salvam
         [HttpPut]
-        public ActionResult Edit(ForumPost forumPost)
+        [Authorize(Roles = "Editor,Admin")]
+        [ValidateInput(false)]
+        public ActionResult Edit(int id, ForumPost requestForumPost)
         {
-            // ... cod update postare...
-            return View("EditPutMethod");
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    ForumPost forumPost = db.ForumPosts.Find(id);
+
+                    if (forumPost.UserId == User.Identity.GetUserId() || User.IsInRole("Admin"))
+                    {
+                        if (TryUpdateModel(forumPost))
+                        {
+                            forumPost.Title = requestForumPost.Title;
+
+                            requestForumPost.Content = Sanitizer.GetSafeHtmlFragment(requestForumPost.Content);
+
+                            forumPost.Content = requestForumPost.Content;
+                            forumPost.CategoryId = requestForumPost.CategoryId;
+                            db.SaveChanges();
+                            TempData["message"] = "Postarea a fost modificata";
+                        }
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        TempData["message"] = "Nu aveti dreptul sa faceti modificari asupra unei postari care nu va apartine";
+                        return RedirectToAction("Index");
+                    }
+                }
+                else
+                {
+                    requestForumPost.Categ = GetAllCategories();
+                    return View(requestForumPost);
+                }
+            }
+            catch (Exception e)
+            {
+                requestForumPost.Categ = GetAllCategories();
+                return View(requestForumPost);
+            }
         }
 
-        // DELETE: Functionalitate de stergere a unei postari
+
+
         [HttpDelete]
+        [Authorize(Roles = "Editor,Admin")]
         public ActionResult Delete(int id)
         {
-            // ... cod stergere postare ...
-            return View("DeleteMethod");
+            ForumPost forumPost = db.ForumPosts.Find(id);
+
+            if (forumPost.UserId == User.Identity.GetUserId() || User.IsInRole("Admin"))
+            {
+                db.ForumPosts.Remove(forumPost);
+                db.SaveChanges();
+                TempData["message"] = "Postarea a fost stearsa";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                TempData["message"] = "Nu aveti dreptul sa stergeti o postarecare nu va apartine";
+                return RedirectToAction("Index");
+            }
         }
+
+
 
 
         [NonAction]
@@ -106,6 +267,58 @@ namespace OpenDiscussionPlatform.Controllers
 
 
 
+
+
+
+
+        [NonAction]
+        public IEnumerable<SelectListItem> GetAllCategories()
+        {
+            // generam o lista goala
+            var selectList = new List<SelectListItem>();
+
+            // extragem toate categoriile din baza de date
+            var categories = from cat in db.Categories
+                             select cat;
+
+            // iteram prin categorii
+            foreach (var category in categories)
+            {
+                // adaugam in lista elementele necesare pentru dropdown
+                selectList.Add(new SelectListItem
+                {
+                    Value = category.CategoryId.ToString(),
+                    Text = category.CategoryName.ToString()
+                });
+            }
+            /*
+            foreach (var category in categories)
+            {
+                var listItem = new SelectListItem();
+                listItem.Value = category.CategoryId.ToString();
+                listItem.Text = category.CategoryName.ToString();
+
+                selectList.Add(listItem);
+            }*/
+
+            // returnam lista de categorii
+            return selectList;
+        }
+
+
+
+
+        private void SetAccessRights()
+        {
+            ViewBag.afisareButoane = false;
+            if (User.IsInRole("Editor") || User.IsInRole("Admin"))
+            {
+                ViewBag.afisareButoane = true;
+            }
+
+            ViewBag.esteAdmin = User.IsInRole("Admin");
+            ViewBag.utilizatorCurent = User.Identity.GetUserId();
+        }
 
 
     }

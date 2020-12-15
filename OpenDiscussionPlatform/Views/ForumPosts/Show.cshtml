@@ -1,21 +1,88 @@
-﻿
+﻿@model OpenDiscussionPlatform.Models.ForumPost
+
 @{
     ViewBag.Title = "Show";
 }
-
-<h2>@ViewBag.Title</h2>
-
-<h1>@ViewBag.ForumPost.Title</h1>
-<p>@ViewBag.ForumPost.Content</p>
-<small>@ViewBag.ForumPost.Date.ToString()</small>
-<br />
-<a href="/postari/listare">Inapoi la postari</a>
 <br />
 
-<form method="post" action="/postari/Delete/@ViewBag.ForumPost.Id">
-    @Html.HttpMethodOverride(HttpVerbs.Delete)
-    <button type="submit">Sterge postare</button>
-</form>
+<div class="panel panel-default">
+    @Html.Partial("ForumPostInfo", Model)
+
+    @if (ViewBag.afisareButoane == true && Model.UserId == ViewBag.utilizatorCurent || ViewBag.esteAdmin)
+    {
+        <div class="panel-footer">
+            <a class="btn btn-primary pull-left" href="/ForumPosts/Edit/@Model.Id">Modifica postare</a>
+
+            @using (Html.BeginForm(actionName: "Delete", controllerName: "ForumPosts"))
+            {
+                @Html.Hidden("Id")
+                @Html.HttpMethodOverride(HttpVerbs.Delete)
+                <button class="btn btn-danger pull-right" type="submit">Sterge postare</button>
+            }
+
+            <div class="clearfix"></div>
+        </div>
+    }
+
+</div>
 
 
 
+
+<br />
+@foreach (var repl in Model.Replies)
+{
+    <div class="container">
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-8">
+                <div>
+                    <p>@repl.Content</p>
+                    <small class="pull-right">@repl.Date</small>
+                    <i class="glyphicon glyphicon-user"></i> <i>scris de</i> <strong> @repl.User.UserName </strong>
+                </div>
+                @if (repl.UserId == ViewBag.utilizatorCurent || ViewBag.esteAdmin)
+                {
+                    <div style="display: inline-block; float : left; margin-right: 15px">
+                        <a class="glyphicon glyphicon-pencil" href="/Replies/Edit/@repl.ReplyId"></a>
+                    </div>
+                    <div style="display: inline-block; float : left">
+                        <form method="post" action="/Replies/Delete/@repl.ReplyId">
+                            @Html.HttpMethodOverride(HttpVerbs.Delete)
+                            <button class="glyphicon glyphicon-trash" style="border: none; background: transparent" type="submit"></button>
+                        </form>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+    <hr />
+}
+
+
+
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-8">
+            <div class="panel">
+                <form method="post" action="/ForumPosts/Show/@Model.Id">
+                    <div class="panel-body">
+                        <input type="hidden" name="ForumPostId" value="@Model.Id" />
+                        <label>Continut raspuns</label>
+                        <br />
+                        <textarea class="form-control" name="Content"></textarea>
+                        @Html.ValidationMessage("Content", "", new { @class = "text-danger" })
+                        <br />
+                        <button class="btn btn-success " type="submit">Adauga raspuns</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+</div>

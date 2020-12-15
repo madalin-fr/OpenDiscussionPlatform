@@ -1,25 +1,26 @@
-﻿@{
-    ViewBag.Title = "Home – OpenDiscussionPlatform";
-}
-
+﻿
 <div class="jumbotron">
     <h1>OpenDiscussionPlatform</h1>
     <h2>Powered by Frîncu Mădălin &amp; Dinescu Matei</h2>
     <p class="lead">We enlighten everything.</p>
-    <p><a class="btn btn-primary btn-lg">Learn more below &darr;</a></p>
 </div>
 
 <div class="row">
     <div class="col-md-4">
         <h2>Getting started</h2>
         <p>
-            FAQ to join the forum will be written up soon.
+            FAQ - to be found soon. Please log in!
         </p>
-        <p><a class="btn btn-default" href="#">Learn more &raquo;</a></p>
     </div>
 
     <div class="col-md-4">
-        <h3> <a href="postari/listare"> Catre forum..</a></h3>
+        <h3> Bine ai venit!</h3>
+
+        @if (TempData.ContainsKey("message"))
+        {
+            <h3 class="alert alert-info" role="alert">@ViewBag.Message</h3>
+        }
+
     </div>
     
 

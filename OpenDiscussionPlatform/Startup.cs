@@ -21,23 +21,27 @@ namespace OpenDiscussionPlatform
         private void CreateAdminUserAndApplicationRoles()
         {
             ApplicationDbContext context = new ApplicationDbContext();
+
             var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(context));
+
             var UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
+
             // Se adauga rolurile aplicatiei
-            if (!roleManager.RoleExists("Administrator"))
+            if (!roleManager.RoleExists("Admin"))
             {
                 // Se adauga rolul de administrator
                 var role = new IdentityRole();
-                role.Name = "Administrator";
+                role.Name = "Admin";
                 roleManager.Create(role);
+
                 // se adauga utilizatorul administrator
                 var user = new ApplicationUser();
-                user.UserName = "admin@admin.com";
-                user.Email = "admin@admin.com";
-                var adminCreated = UserManager.Create(user, "Administrator1!");
+                user.UserName = "admin@gmail.com";
+                user.Email = "admin@gmail.com";
+                var adminCreated = UserManager.Create(user, "!1Admin");
                 if (adminCreated.Succeeded)
                 {
-                    UserManager.AddToRole(user.Id, "Administrator");
+                    UserManager.AddToRole(user.Id, "Admin");
                 }
             }
             if (!roleManager.RoleExists("Editor"))
@@ -46,6 +50,7 @@ namespace OpenDiscussionPlatform
                 role.Name = "Editor";
                 roleManager.Create(role);
             }
+
             if (!roleManager.RoleExists("User"))
             {
                 var role = new IdentityRole();
