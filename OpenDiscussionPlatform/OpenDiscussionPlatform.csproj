@@ -260,11 +260,12 @@
     <Content Include="Views\Categories\New.cshtml" />
     <Content Include="Views\Categories\Show.cshtml" />
     <Content Include="Views\Categories\Edit.cshtml" />
+    <Content Include="Views\UserProfile\Show.cshtml" />
+    <Content Include="Views\UserProfile\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\Search\" />
-    <Folder Include="Views\UserProfile\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

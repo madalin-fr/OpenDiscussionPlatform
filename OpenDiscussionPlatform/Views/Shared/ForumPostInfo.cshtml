@@ -1,5 +1,4 @@
 ﻿
-
 <div class="panel-heading forumpost-heading">
     <h1 class="font-roboto article-title">@Model.Title</h1>
 </div>
@@ -20,7 +19,16 @@
     </div>
     <div>
         <i class="glyphicon glyphicon-user"></i>
-        <strong> <a href="/UserProfile/Show/@Model.User.Id">  @Model.User.UserName </a> </strong>
+        <strong>
+            @if (ViewBag.AfisareProfiluri)
+            {
+                <a href="/Users/Show/@Model.User.Id">  @Model.User.UserName </a>
+            }
+            else
+            {
+                @Model.User.UserName
+            }
+        </strong>
     </div>
 </div>
 

@@ -1,7 +1,7 @@
 ﻿@model OpenDiscussionPlatform.Models.ApplicationUser
 
 @{
-    ViewBag.Title = "Detalii utilizator";
+    ViewBag.Title = "Profil utilizator";
 }
 
 <ol class="breadcrumb">
@@ -9,11 +9,20 @@
 </ol>
 
 
+<ul class="thumbnails">
+    <li class="span4">
+        <a href="#" class="thumbnail">
+            <img data-src="holder.js/300x200" alt="">
+        </a>
+    </li>
+</ul>
 
 <div class="panel-heading">Nume utilizator: @Model.UserName</div>
 
 <div class="panel-body">
 
+    <i class="glyphicon-user"></i> Nume real: @Model.RealName 
+    <br />
     <i class="glyphicon glyphicon-envelope"></i> Email utilizator: <span class="label label-default">@Model.Email</span>
     <br />
     <i class="glyphicon glyphicon-th-list"></i> Rol utilizator: @ViewBag.roleName
@@ -23,6 +32,14 @@
     @if (@Model.PhoneNumber != null)
     {
         <i class="glyphicon glyphicon-phone"></i>@:Telefon utilizator:<span class="label label-default">@Model.PhoneNumber</span>
+
+
+
+
+
+
+
+
 
 
 

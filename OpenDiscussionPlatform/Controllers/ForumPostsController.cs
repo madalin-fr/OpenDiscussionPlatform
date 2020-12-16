@@ -43,6 +43,11 @@ namespace OpenDiscussionPlatform.Controllers
             ViewBag.lastPage = Math.Ceiling((float)totalItems / (float)this._perPage);
             ViewBag.ForumPosts = paginatedForumPosts;
 
+            if (User.IsInRole("User"))
+                ViewBag.AfisareProfiluri = false;
+            else
+                ViewBag.AfisareProfiluri = true;
+
             return View();
         }
 
@@ -66,6 +71,12 @@ namespace OpenDiscussionPlatform.Controllers
             ViewBag.utilizatorCurent = User.Identity.GetUserId();
 
             */
+
+            if (User.IsInRole("User"))
+                ViewBag.AfisareProfiluri = false;
+            else
+                ViewBag.AfisareProfiluri = true;
+
 
             return View(forumPost);
 
