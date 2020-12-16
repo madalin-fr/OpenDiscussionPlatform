@@ -39,7 +39,8 @@
                 <div>
                     <p>@repl.Content</p>
                     <small class="pull-right">@repl.Date</small>
-                    <i class="glyphicon glyphicon-user"></i> <i>scris de</i> <strong> @repl.User.UserName </strong>
+                    <i class="glyphicon glyphicon-user"></i> <i>scris de</i> 
+                    <strong> <a href="/UserProfile/Show/@repl.User.Id"> @repl.User.UserName</a> </strong>
                 </div>
                 @if (repl.UserId == ViewBag.utilizatorCurent || ViewBag.esteAdmin)
                 {

@@ -20,11 +20,11 @@ namespace OpenDiscussionPlatform.Controllers
                 return RedirectToAction("Index", "ForumPosts");
             }
 
-            var forumposts= from forumpost in db.ForumPosts
-                           select forumpost;
+            //var forumposts = from forumpost in db.ForumPosts
+            //                 select forumpost;
 
-            ViewBag.FirstForumPost = forumposts.First();
-            ViewBag.ForumPosts = forumposts.OrderBy(o => o.Date).Skip(1).Take(2);
+            //ViewBag.FirstForumPost = forumposts.First();
+            //ViewBag.ForumPosts = forumposts.OrderBy(o => o.Date).Skip(1).Take(2);
 
             return View();
         }
