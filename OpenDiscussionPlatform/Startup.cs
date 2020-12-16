@@ -55,10 +55,10 @@ namespace OpenDiscussionPlatform
 
 
             }
-            if (!roleManager.RoleExists("Editor"))
+            if (!roleManager.RoleExists("Moderator"))
             {
                 var role = new IdentityRole();
-                role.Name = "Editor";
+                role.Name = "Moderator";
                 roleManager.Create(role);
             }
 

@@ -17,7 +17,7 @@ namespace OpenDiscussionPlatform.Controllers
         private int _perPage = 3;
 
         /// GET: ForumPost
-        [Authorize(Roles = "User,Editor,Admin")]
+        [Authorize(Roles = "User,Moderator,Admin")]
         public ActionResult Index()
         {
             var forumposts = db.ForumPosts.Include("Category").Include("User").OrderBy(a => a.Date);
@@ -53,7 +53,7 @@ namespace OpenDiscussionPlatform.Controllers
 
 
 
-        [Authorize(Roles = "User,Editor,Admin")]
+        [Authorize(Roles = "User,Moderator,Admin")]
         public ActionResult Show(int id)
         {
             ForumPost forumPost = db.ForumPosts.Find(id);
@@ -62,7 +62,7 @@ namespace OpenDiscussionPlatform.Controllers
 
             /*
             ViewBag.afisareButoane = false;
-            if (User.IsInRole("Editor") || User.IsInRole("Admin"))
+            if (User.IsInRole("Moderator") || User.IsInRole("Admin"))
             {
                 ViewBag.afisareButoane = true;
             }
@@ -83,7 +83,7 @@ namespace OpenDiscussionPlatform.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "User,Editor,Admin")]
+        [Authorize(Roles = "User,Moderator,Admin")]
         public ActionResult Show(Reply repl)
         {
             repl.Date = DateTime.Now;
@@ -119,7 +119,7 @@ namespace OpenDiscussionPlatform.Controllers
 
         }
 
-        [Authorize(Roles = "Editor,Admin")]
+        [Authorize(Roles = "User,Moderator,Admin")]
         public ActionResult New()
         {
             ForumPost forumPost = new ForumPost();
@@ -135,7 +135,7 @@ namespace OpenDiscussionPlatform.Controllers
 
 
         [HttpPost]
-        [Authorize(Roles = "Editor,Admin")]
+        [Authorize(Roles = "User,Moderator,Admin")]
         [ValidateInput(false)]
         public ActionResult New(ForumPost forumPost)
         {
@@ -166,7 +166,7 @@ namespace OpenDiscussionPlatform.Controllers
         }
 
 
-        [Authorize(Roles = "Editor,Admin")]
+        [Authorize(Roles = "Moderator,Admin")]
         public ActionResult Edit(int id)
         {
             ForumPost forumPost = db.ForumPosts.Find(id);
@@ -186,7 +186,7 @@ namespace OpenDiscussionPlatform.Controllers
 
 
         [HttpPut]
-        [Authorize(Roles = "Editor,Admin")]
+        [Authorize(Roles = "Moderator,Admin")]
         [ValidateInput(false)]
         public ActionResult Edit(int id, ForumPost requestForumPost)
         {
@@ -233,7 +233,7 @@ namespace OpenDiscussionPlatform.Controllers
 
 
         [HttpDelete]
-        [Authorize(Roles = "Editor,Admin")]
+        [Authorize(Roles = "Moderator,Admin")]
         public ActionResult Delete(int id)
         {
             ForumPost forumPost = db.ForumPosts.Find(id);
@@ -322,7 +322,7 @@ namespace OpenDiscussionPlatform.Controllers
         private void SetAccessRights()
         {
             ViewBag.afisareButoane = false;
-            if (User.IsInRole("Editor") || User.IsInRole("Admin"))
+            if (User.IsInRole("Moderator") || User.IsInRole("Admin"))
             {
                 ViewBag.afisareButoane = true;
             }
