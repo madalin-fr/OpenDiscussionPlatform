@@ -1,9 +1,11 @@
 ﻿
 <div class="panel-heading forumpost-heading">
-    <h1 class="font-roboto article-title">@Model.Title</h1>
+    <h1 class="forumpost-title">@Model.Title</h1>
 </div>
 
 <div class="panel-body">
+    <span class="forumpost-content-title">Continut postare</span>
+    <br />
     <div class="forumpost-content-wrapper">
         @Html.Raw(Model.Content)
     </div>

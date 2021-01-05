@@ -166,7 +166,7 @@ namespace OpenDiscussionPlatform.Controllers
         }
 
 
-        [Authorize(Roles = "E-ditor,Admin")]
+        [Authorize(Roles = "E-ditor,Admin,User")]
         public ActionResult Edit(int id)
         {
             ForumPost forumPost = db.ForumPosts.Find(id);
@@ -186,7 +186,7 @@ namespace OpenDiscussionPlatform.Controllers
 
 
         [HttpPut]
-        [Authorize(Roles = "E-ditor,Admin")]
+        [Authorize(Roles = "E-ditor,Admin,User")]
         [ValidateInput(false)]
         public ActionResult Edit(int id, ForumPost requestForumPost)
         {
@@ -233,7 +233,7 @@ namespace OpenDiscussionPlatform.Controllers
 
 
         [HttpDelete]
-        [Authorize(Roles = "E-ditor,Admin")]
+        [Authorize(Roles = "E-ditor,Admin,User")]
         public ActionResult Delete(int id)
         {
             ForumPost forumPost = db.ForumPosts.Find(id);
@@ -322,7 +322,7 @@ namespace OpenDiscussionPlatform.Controllers
         private void SetAccessRights()
         {
             ViewBag.afisareButoane = false;
-            if (User.IsInRole("E-ditor") || User.IsInRole("Admin"))
+            if (User.IsInRole("E-ditor") || User.IsInRole("Admin") || User.IsInRole("User"))
             {
                 ViewBag.afisareButoane = true;
             }

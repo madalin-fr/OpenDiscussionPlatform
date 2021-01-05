@@ -3,10 +3,12 @@
     <h3 class="alert alert-info" role="alert">@ViewBag.Message</h3>
 }
 
+<h2>Pagina de bord</h2>
+
 
 @foreach (OpenDiscussionPlatform.Models.ForumPost forumPost in ViewBag.ForumPosts)
 {
-    <div class="panel panel-article">
+    <div class="panel panel-forumpost">
         @Html.Partial("ForumPostInfo", forumPost)
         <div class="panel-footer">
             <a class="btn btn-sm btn-success full-width" href="/ForumPosts/Show/@forumPost.Id">Afisare postare</a>
