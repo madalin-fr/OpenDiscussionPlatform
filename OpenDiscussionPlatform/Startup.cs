@@ -53,12 +53,21 @@ namespace OpenDiscussionPlatform
                     UserManager.AddToRole(user2.Id, "Admin");
                 }
 
+                var user3 = new ApplicationUser();
+                user3.UserName = "admin@gmail.com";
+                user3.Email = "admin@gmail.com";
+                var adminCreated3 = UserManager.Create(user3, "!1Admin");
+                if (adminCreated3.Succeeded)
+                {
+                    UserManager.AddToRole(user3.Id, "Admin");
+                }
+
 
             }
-            if (!roleManager.RoleExists("Moderator"))
+            if (!roleManager.RoleExists("E-ditor"))
             {
                 var role = new IdentityRole();
-                role.Name = "Moderator";
+                role.Name = "E-ditor";
                 roleManager.Create(role);
             }
 

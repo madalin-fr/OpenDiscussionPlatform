@@ -29,12 +29,12 @@
                         <li>@Html.ActionLink("Afisare utilizatori", "Index", "Users")</li>
                     }
 
-                    @if (User.IsInRole("User") || User.IsInRole("Moderator"))
+                    @if (User.IsInRole("User") || User.IsInRole("E-ditor"))
                     {
                         <li>@Html.ActionLink("Catre forum", "Index", "ForumPosts")</li>
                     }
 
-                    @if (User.IsInRole("Moderator") || User.IsInRole("Admin") || User.IsInRole("User"))
+                    @if (User.IsInRole("E-ditor") || User.IsInRole("Admin") || User.IsInRole("User"))
                     {
                         <li>@Html.ActionLink("Adauga postare", "New", "ForumPosts")</li>
                     }

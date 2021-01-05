@@ -28,8 +28,6 @@ namespace OpenDiscussionPlatform.Models
         public string UserId { get; set; }
 
         public virtual ApplicationUser User { get; set; }
-
-
         public virtual Category Category { get; set; }
         public virtual ICollection<Reply> Replies { get; set; }
 

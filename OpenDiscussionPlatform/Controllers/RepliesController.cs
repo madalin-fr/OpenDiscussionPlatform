@@ -22,7 +22,7 @@ namespace OpenDiscussionPlatform.Controllers
 
 
         [HttpDelete]
-        [Authorize(Roles = "User,Moderator,Admin")]
+        [Authorize(Roles = "User,E-ditor,Admin")]
         public ActionResult Delete(int id)
         {
             Reply repl= db.Replies.Find(id);
@@ -42,7 +42,7 @@ namespace OpenDiscussionPlatform.Controllers
 
 
 
-        [Authorize(Roles = "User,Moderator,Admin")]
+        [Authorize(Roles = "User,E-ditor,Admin")]
         public ActionResult Edit(int id)
         {
             Reply repl = db.Replies.Find(id);
@@ -60,7 +60,7 @@ namespace OpenDiscussionPlatform.Controllers
 
 
         [HttpPut]
-        [Authorize(Roles = "User,Moderator,Admin")]
+        [Authorize(Roles = "User,E-ditor,Admin")]
         public ActionResult Edit(int id, Reply requestReply)
         {
             try
