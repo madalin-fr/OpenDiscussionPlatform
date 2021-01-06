@@ -26,8 +26,10 @@ namespace OpenDiscussionPlatform
 
             var UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
 
+
+            
             // Se adauga rolurile aplicatiei
-            if (!roleManager.RoleExists("Admin"))
+            if (!roleManager.RoleExists("Admin"))  
             {
                 // Se adauga rolul de administrator
                 var role = new IdentityRole();
@@ -38,6 +40,7 @@ namespace OpenDiscussionPlatform
                 var user = new ApplicationUser();
                 user.UserName = "mateidinescu@gmail.com";
                 user.Email = "mateidinescu@gmail.com";
+               // user.Birthdate = new System.DateTime(2015, 12, 25);
                 var adminCreated = UserManager.Create(user, "!1Admin");
                 if (adminCreated.Succeeded)
                 {

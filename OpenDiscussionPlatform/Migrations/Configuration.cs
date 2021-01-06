@@ -11,7 +11,6 @@ namespace OpenDiscussionPlatform.Migrations
         {
             AutomaticMigrationsEnabled = true;
             AutomaticMigrationDataLossAllowed = true;
-
             ContextKey = "OpenDiscussionPlatform.Models.ApplicationDbContext";
         }
 

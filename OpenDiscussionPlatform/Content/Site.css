@@ -24,14 +24,19 @@ textarea {
 }
 
 
+.font-logo {
+    font-family: 'Permanent Marker', cursive;
+    color: white !important;
+}
+
 .navbar {
-    background-color: #dadada;
+    background-color: #3b5999;
     border: none;
     box-shadow: 0 6px 12px #dadada;
 }
 
     .navbar a {
-        color: #2c2c2c;
+        color: #cccccc;
     }
 
         .navbar a:hover {
@@ -39,9 +44,6 @@ textarea {
         }
 
 
-/*.font-logo {
-    font-family: 'Permanent Marker', cursive;
-}*/
 
 
 .footer-position {

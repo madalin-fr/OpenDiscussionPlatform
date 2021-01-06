@@ -1,4 +1,5 @@
-﻿using OpenDiscussionPlatform.Models;
+﻿using Microsoft.AspNet.Identity;
+using OpenDiscussionPlatform.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +30,16 @@ namespace OpenDiscussionPlatform.Controllers
             return View();
         }
 
+        public ActionResult varsta()
+        {
+            //ApplicationUser user = db.Users.Find(User.Identity.GetUserId());
+            TimeSpan x = new TimeSpan();
+            var details = db.UsersDetails.Find(User.Identity.GetUserId());
+
+            x = DateTime.Now - details.Birthdate;
+            ViewBag.varsta = x;
+            return PartialView();
+        }
 
     }
 }

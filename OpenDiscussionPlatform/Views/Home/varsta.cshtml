@@ -1,0 +1,6 @@
+﻿@{ 
+    ViewBag.ani = Convert.ToInt32(ViewBag.varsta.TotalDays / 365);
+    ViewBag.luni = Convert.ToInt32(ViewBag.varsta.TotalDays / 365 / 12);
+}
+
+<p>Varsta ta creste. La fel si intelepciunea. <span style="color:#595800;font-weight:1000">EXP: @ViewBag.ani ani si @ViewBag.luni luni</span></p>

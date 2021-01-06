@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace OpenDiscussionPlatform.Models
@@ -64,6 +65,23 @@ namespace OpenDiscussionPlatform.Models
 
     public class RegisterViewModel
     {
+        [Required]
+        [StringLength(30, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
+        [Display(Name = "Full name")]
+        [DataType(DataType.Text)]
+        public string FullName { get; set; }
+
+        //[Required]
+        [Display(Name = "Birthdate")]
+        //[DataType(DataType.Date)]
+        public DateTime Birthdate { get; set; }
+
+        [Display(Name = "PhoneNumber")]
+        [DataType(DataType.PhoneNumber)]
+        public string PhoneNumber { get; set; }
+
+
+
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]

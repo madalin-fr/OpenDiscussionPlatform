@@ -123,6 +123,7 @@ namespace OpenDiscussionPlatform.Controllers
         public ActionResult New()
         {
             ForumPost forumPost = new ForumPost();
+            
 
             // preluam lista de categorii din metoda GetAllCategories()
             forumPost.Categ = GetAllCategories();

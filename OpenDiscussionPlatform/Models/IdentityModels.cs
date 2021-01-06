@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -28,14 +29,14 @@ namespace OpenDiscussionPlatform.Models
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
         {
-            Database.SetInitializer(new MigrateDatabaseToLatestVersion<ApplicationDbContext, OpenDiscussionPlatform.Migrations.Configuration>("DefaultConnection"));
+           Database.SetInitializer(new MigrateDatabaseToLatestVersion<ApplicationDbContext, OpenDiscussionPlatform.Migrations.Configuration>("DefaultConnection"));
 
         }
 
         public DbSet<ForumPost> ForumPosts { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Reply> Replies { get; set; }
-
+        public DbSet<UserDetails> UsersDetails { get; set; }
 
 
         public static ApplicationDbContext Create()

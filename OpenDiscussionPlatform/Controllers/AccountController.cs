@@ -148,20 +148,40 @@ namespace OpenDiscussionPlatform.Controllers
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
-        {
+        { 
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email};
+                
+
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-
-
                     UserManager.AddToRole(user.Id, "User");
 
 
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
+
+
+                    var userDetails = new UserDetails();
+
+                    userDetails.Birthdate = model.Birthdate;
+                    userDetails.UserId = user.Id;
+                    userDetails.PhoneNumber = model.PhoneNumber;
+                    userDetails.FullName = model.FullName;
+
+                    ApplicationDbContext db = new ApplicationDbContext();
+
+                    db.UsersDetails.Add(userDetails);
+                    System.Diagnostics.Debug.WriteLine(userDetails.Birthdate);
+                    System.Diagnostics.Debug.WriteLine(userDetails.FullName);
+                    System.Diagnostics.Debug.WriteLine(userDetails.UserId);
+                    System.Diagnostics.Debug.WriteLine(User.Identity.GetUserId());
+                    System.Diagnostics.Debug.WriteLine(userDetails.PhoneNumber);
+                    db.SaveChanges();
+
+
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
@@ -174,8 +194,9 @@ namespace OpenDiscussionPlatform.Controllers
             }
 
             // If we got this far, something failed, redisplay form
-            return View(model);
+                return View(model);
         }
+        
 
         //
         // GET: /Account/ConfirmEmail
